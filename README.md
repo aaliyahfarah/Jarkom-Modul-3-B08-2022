@@ -302,8 +302,6 @@ subnet 10.7.1.0 netmask 255.255.255.0 {
 }
 ```
 
- **TESTING**
- <img alt="testing3" src="pic/testing3.png">
 
 ## Soal 4
 
@@ -326,36 +324,40 @@ subnet 10.7.3.0 netmask 255.255.255.0 {
 }
 ```
 
- **TESTING**
- <img alt="testing4" src="pic/testing4.png">
-
 ## Soal 5
 
 ***4. Client mendapatkan DNS dari WISE dan client dapat terhubung dengan internet melalui DNS 
 tersebut (5)***<br><br>
 
-Untuk client mendapatkan DNS dari WISE diperlukan konfigurasi pada file /etc/dhcp/dhcpd.conf dengan option domain-name-servers 10.45.2.2
-
-Supaya semua client dapat terhubung internet pada WISE diberikan konfigurasi pada file /etc/bind/named.conf.options dengan
+Kita juga akan membuat suatu temporary file yaitu pada file `no5.sh` dengan isi sebagai berikut
 
 ```
+echo -e '
 options {
-        directory \"/var/cache/bind\";
+        directory "/var/cache/bind";
 
-        forwarders {
-                8.8.8.8;
-                8.8.8.4;
-        };
+        // If there is a firewall between you and nameservers you want
+        // to talk to, you may need to fix the firewall to allow multiple
+        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+           forwarders {
+                192.168.122.1;
+           };
 
-        // dnssec-validation auto;
-        allow-query { any; };
+        //=====================================================================$
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //=====================================================================$
+        //dnssec-validation auto;
+        allow-query{any;};
         auth-nxdomain no;    # conform to RFC1035
         listen-on-v6 { any; };
-};
+	};
+' > /etc/bind/named.conf.options
+
+service bind9 start
 ```
 
- **TESTING**
- <img alt="testing5" src="pic/testing5.png">
+Hal ini akan membuat Client mendapatkan DNS dari WISE dan terhubung dengan internet melalui DNS.
 
 ## Soal 6
 
@@ -380,15 +382,12 @@ subnet 10.7.3.0 netmask 255.255.255.0 {
 }
 ```
 
- **TESTING**
- <img alt="testing6" src="pic/testing6.png">
-
 ## Soal 7
 
 ***Loid dan Franky berencana menjadikan Eden sebagai server untuk pertukaran informasi 
 dengan alamat IP yang tetap dengan IP [prefix IP].3.13 (7)***<br><br>
 
-Pada Eden, menambahkan konfigurasi untuk fixed address pada `/etc/dhcp/dhcpd.conf`
+Pada Westalis, menambahkan konfigurasi untuk fixed address pada `/etc/dhcp/dhcpd.conf`
 
 ```
 host Eden {
@@ -396,15 +395,19 @@ host Eden {
     fixed-address 10.7.3.13;
 }
 ```
-Setelah itu tidak lupa untuk mengganti konfigurasi pada file `/etc/network/interfaces` dengan
+
+Lalu pada Eden, ditambahkan file temporary `no7.sh` dengan isi sebagai berikut 
+
 ```
-auto eth0
+echo -e '
+	auto eth0
 	iface eth0 inet dhcp
 	hwaddress ether a6:09:e5:e8:1a:14
+	' > /etc/network/interfaces
 ```
 
- **TESTING**
- <img alt="testing7" src="pic/testing7.png">
+Lalu dari Eden di restart, maka akan menyebabkan IP fixed address pada node Eden yang memiliki interface eth0 berubah menjadi 10.7.3.13/24
+ ![image](https://user-images.githubusercontent.com/88140623/201699565-dcd1eedd-e05a-407b-833a-4bd623703664.png)
 
 ## Soal 8
 
