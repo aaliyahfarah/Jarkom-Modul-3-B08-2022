@@ -114,9 +114,9 @@ auto eth1
   **Eden**
  
  ```
- auto eth0
- iface eth0 inet dhcp
-	  hwaddress ether 
+auto eth0
+iface eth0 inet dhcp
+	hwaddress ether a6:09:e5:e8:1a:14
  ```
  
  **NewstonCastle**
@@ -350,19 +350,19 @@ subnet 10.7.3.0 netmask 255.255.255.0 {
 ***Loid dan Franky berencana menjadikan Eden sebagai server untuk pertukaran informasi 
 dengan alamat IP yang tetap dengan IP [prefix IP].3.13 (7)***<br><br>
 
-Menambahkan konfigurasi untuk fixed address pada `/etc/dhcp/dhcpd.conf`
+Pada Eden, menambahkan konfigurasi untuk fixed address pada `/etc/dhcp/dhcpd.conf`
 
 ```
 host Eden {
-    hardware ethernet be:c0:ff:37:bb:09;
+    hardware ethernet a6:09:e5:e8:1a:14;
     fixed-address 10.7.3.13;
 }
 ```
 Setelah itu tidak lupa untuk mengganti konfigurasi pada file `/etc/network/interfaces` dengan
 ```
 auto eth0
-iface eth0 inet dhcp
-hwaddress ether be:c0:ff:37:bb:09
+	iface eth0 inet dhcp
+	hwaddress ether a6:09:e5:e8:1a:14
 ```
 
  **TESTING**
