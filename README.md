@@ -631,7 +631,7 @@ Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain h
 ![201597262-bd21739a-d446-4372-897e-403cf624cbda](https://user-images.githubusercontent.com/88140623/201702582-f983ef2f-fa8c-44d6-8189-877490f486db.png)
 
 - Senin (20.00) -> tidak dapat diakses        
-![201598535-b44e8e03-0eb9-4024-80b9-d0c9e83f35ae](https://user-images.githubusercontent.com/88140623/201705073-c1de5016-35fe-48ee-83cc-e61c55ae8868.png)
+   ![201598535-b44e8e03-0eb9-4024-80b9-d0c9e83f35ae](https://user-images.githubusercontent.com/88140623/201705073-c1de5016-35fe-48ee-83cc-e61c55ae8868.png)
 
 - Sabtu (10.00) -> tidak dapat diakses
 ![201597322-528a9d46-26e5-46eb-9109-2a1ab10f9759](https://user-images.githubusercontent.com/88140623/201705147-77f9b90c-d767-405e-b556-41952d14c844.png)
@@ -665,7 +665,8 @@ echo -e '
 ```
 
 - Senin (10.00) -> dapat diakses
-![201597707-f5dcc217-c56e-41b5-b481-054bf0997938](https://user-images.githubusercontent.com/88140623/201705467-1bb90bb9-bd22-4e5e-986e-52bdc8b6c605.png)
+
+ ![201597707-f5dcc217-c56e-41b5-b481-054bf0997938](https://user-images.githubusercontent.com/88140623/201705467-1bb90bb9-bd22-4e5e-986e-52bdc8b6c605.png)
 
 - Senin (20.00) -> tidak dapat diakses
 ![201598216-72f97766-da0e-4f81-a56c-c76afc7e0541](https://user-images.githubusercontent.com/88140623/201705483-02fe4b6d-30cf-41d6-a462-c5d08e45e306.png)
