@@ -46,7 +46,7 @@
  
  Lalu konfigurasi setiap nodenya<br>
  
- **Foosha**   
+ **Ostania**   
  
 ```
 auto eth0
@@ -123,50 +123,64 @@ iface eth0 inet dhcp
  
  ```
  auto eth0
- iface eth0 inet static
-	  address 10.7.3.3
-	  netmask 255.255.255.0
-	  gateway 10.7.3.1
+auto eth0
+iface eth0 inet dhcp
   ```
   
   **KemonoPark**
  
  ```
  auto eth0
- iface eth0 inet static
-	  address 10.7.3.4
-	  netmask 255.255.255.0
-	  gateway 10.7.3.1
+ iface eth0 inet dhcp
   ```
  
  Buat node sesuai dengan kriterianya:<br>
  
- WISE -> DNS Server 
- 
- ```
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
+```shell
+# WISE
+echo nameserver 192.168.122.1 > /etc/resolv.conf
 apt-get update
 apt-get install bind9 -y
- ```
- 
- Westalis -> DHCP Server
- 
- ```
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
+# Westalis
+echo nameserver 192.168.122.1 > /etc/resolv.conf
 apt-get update
 apt-get install isc-dhcp-server -y
- ```
- 
-  Berlint -> Proxy Server
- ```
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
+# Berlint
+echo nameserver 192.168.122.1 > /etc/resolv.conf
 apt-get update
-apt-get install libapache2-mod-php7.0 -y
 apt-get install squid -y
- ```
- 
- **TESTING**
- <img alt="testing1" src="pic/testing1.png">
+```
+
+Selain, itu untuk menjadikan Westalis sebagai DHCP Server, kita perlu menambahkan konfigurasi pada node Westalis pada file `/etc/default/isc-dhcp-server` yang kita buat konfigurasinya pada file temporary yaitu `isc-dhcp-server-1` dengan ditambahkan `INTERFACES="eth0"`
+
+```shell
+# Defaults for isc-dhcp-server initscript
+# sourced by /etc/init.d/isc-dhcp-server
+# installed at /etc/default/isc-dhcp-server by the maintainer scripts
+#
+# This is a POSIX shell fragment
+#
+# Path to dhcpd's config file (default: /etc/dhcp/dhcpd.conf).
+#DHCPD_CONF=/etc/dhcp/dhcpd.conf
+# Path to dhcpd's PID file (default: /var/run/dhcpd.pid).
+#DHCPD_PID=/var/run/dhcpd.pid
+# Additional options to start dhcpd with.
+#       Don't use options -cf or -pf here; use DHCPD_CONF/ DHCPD_PID instead
+#OPTIONS=""
+# On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
+#       Separate multiple interfaces with spaces, e.g. "eth0 eth1".
+INTERFACES="eth0"
+```
+
+Setelah itu, kita jalankan script `soal1.sh` pada node Westalis yang berisi:
+
+```shell
+cp /root/isc-dhcp-server-1 /etc/default/isc-dhcp-server
+service isc-dhcp-server restart
+```
+
+Hal ini membuat masing-masing node memiliki server tersendiri.
+
    
 ## Soal 2
 
@@ -239,7 +253,7 @@ Membuat Westalis menjadi DHCP Server. Karena Westais Terhubung dengan Ostania me
 
 # On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
 #       Separate multiple interfaces with spaces, e.g. "eth0 eth1".
-INTERFACES="eth0"
+INTERFACES=\"eth0\"" > /etc/default/isc-dhcp-server
 ```
 
 Setelah itu, lakukan restart DHCP Server di Westalis
