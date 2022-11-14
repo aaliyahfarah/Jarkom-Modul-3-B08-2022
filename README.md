@@ -409,6 +409,7 @@ echo -e '
 Lalu dari Eden di restart, maka akan menyebabkan IP fixed address pada node Eden yang memiliki interface eth0 berubah menjadi 10.7.3.13/24
  ![image](https://user-images.githubusercontent.com/88140623/201699565-dcd1eedd-e05a-407b-833a-4bd623703664.png)
 
+
 ## Soal 8
 
 ***SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi dapat terjamin
@@ -470,6 +471,7 @@ Maka, ketika di test pada client dengan `lynx http://its.ac.id` dan `lynx https:
 ![201596650-3accc237-a0a4-4dbc-bb78-0702e9518810](https://user-images.githubusercontent.com/88140623/201692744-64e7720e-79e2-47eb-8eb4-c9ce2bd0351d.png)
 - Senin (20.00) dan Sabtu (10.00) -> dapat diakses
 ![201596969-0da0f06c-da91-4995-9eb7-86b2d9f2f5f5](https://user-images.githubusercontent.com/88140623/201692769-67c316d8-1a9f-44b7-bf97-be8d1f9d8239.png)
+
 
 ## Soal 9
 
@@ -582,7 +584,7 @@ Pada Berlint, tambahkan konfigurasi pada file `no8-9.sh`
 
 - no8-9.sh
   
-  ```shell
+  ```
     echo -e '
 	.loid-work.com
 	.franky-work.com
@@ -624,8 +626,15 @@ Pada Berlint, tambahkan konfigurasi pada file `no8-9.sh`
 
 Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain hanya diakses di jam kerja. 
 
- **TESTING**
- <img alt="testing9" src="pic/testing9.png">
+ 
+- Senin (10.00) -> dapat diakses
+![201597262-bd21739a-d446-4372-897e-403cf624cbda](https://user-images.githubusercontent.com/88140623/201702582-f983ef2f-fa8c-44d6-8189-877490f486db.png)
+
+- Senin (20.00) -> tidak dapat diakses        
+![201598535-b44e8e03-0eb9-4024-80b9-d0c9e83f35ae](https://user-images.githubusercontent.com/88140623/201705073-c1de5016-35fe-48ee-83cc-e61c55ae8868.png)
+
+- Sabtu (10.00) -> tidak dapat diakses
+![201597322-528a9d46-26e5-46eb-9109-2a1ab10f9759](https://user-images.githubusercontent.com/88140623/201705147-77f9b90c-d767-405e-b556-41952d14c844.png)
 
 ## Soal 10
 
@@ -655,8 +664,15 @@ echo -e '
 
 ```
 
- **TESTING**
- <img alt="testing10" src="pic/testing10.png">
+- Senin (10.00) -> dapat diakses
+![201597707-f5dcc217-c56e-41b5-b481-054bf0997938](https://user-images.githubusercontent.com/88140623/201705467-1bb90bb9-bd22-4e5e-986e-52bdc8b6c605.png)
+
+- Senin (20.00) -> tidak dapat diakses
+![201598216-72f97766-da0e-4f81-a56c-c76afc7e0541](https://user-images.githubusercontent.com/88140623/201705483-02fe4b6d-30cf-41d6-a462-c5d08e45e306.png)
+
+- Sabtu (10.00) -> tidak dapat diakses
+![201598286-5c105af9-7bf8-4003-b536-354c1dd62342](https://user-images.githubusercontent.com/88140623/201705499-034104f0-2baf-4fe5-9897-883c29a1f8f7.png)
+
 
 ## Kendala
 + Aaliyah Farah Adibah
