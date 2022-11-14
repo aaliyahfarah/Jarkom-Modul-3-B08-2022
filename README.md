@@ -397,24 +397,6 @@ domain loid-work.com dan franky-work.com (IP tujuan domain dibebaskan)***<br><br
  **TESTING**
  <img alt="testing10" src="pic/testing10.png">
 
-## Soal 11
-
-***4. Agar menghemat penggunaan, akses internet dibatasi dengan kecepatan maksimum 128 Kbps 
-pada setiap host (Kbps = kilobit per second; lakukan pengecekan pada tiap host, ketika 2 host 
-akses internet pada saat bersamaan, keduanya mendapatkan speed maksimal yaitu 128 Kbps)***<br><br>
-
- **TESTING**
- <img alt="testing11" src="pic/testing11.png">
-
-## Soal 12
-
-***5. Setelah diterapkan, ternyata peraturan nomor (4) mengganggu produktifitas saat hari kerja, 
-dengan demikian pembatasan kecepatan hanya diberlakukan untuk pengaksesan internet pada
-hari libur***<br><br>
-
- **TESTING**
- <img alt="testing12" src="pic/testing12.png">
-
 ## Kendala
 + Aaliyah Farah Adibah
 
