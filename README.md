@@ -473,6 +473,143 @@ Maka, ketika di test pada client dengan `lynx http://its.ac.id` dan `lynx https:
 ***2. Adapun pada hari dan jam kerja sesuai nomor (1), client hanya dapat mengakses 
 domain loid-work.com dan franky-work.com (IP tujuan domain dibebaskan)***<br><br>
 
+## Soal 9
+
+***2. Adapun pada hari dan jam kerja sesuai nomor (1), client hanya dapat mengakses 
+domain loid-work.com dan franky-work.com (IP tujuan domain dibebaskan)***<br><br>
+
+Pada Node Wise, buat isi file `named.conf.local` kemudian buat directory baru dengan perintah `mkdir /etc/bind/wise` dan buat file baru lagi pada directory wise dengan nama `loid-work.com` dan `franky-work.com` kemudian isikan syntax berikut :
+
+```
+    shell
+    # /etc/bind/named.conf.local
+    zone "loid-work.com" {
+        type master;
+        file "/etc/bind/wise/loid-work.com";
+        allow-transfer { 10.7.3.13; };
+    };
+
+    zone "franky-work.com" {
+        type master;
+        file "/etc/bind/wise/franky-work.com";
+        allow-transfer { 10.7.3.13; };
+    };
+
+    # /etc/bind/wise/loid-work.com
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     loid-work.com. root.loid-work.com. (
+                            2022100601      ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @       IN      NS      loid-work.com.
+    @       IN      A       10.7.3.13
+    www     IN      CNAME   loid-work.com.
+
+    # /etc/bind/wise/franky-work.com
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     franky-work.com. root.franky-work.com. (
+                            2022100601      ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @       IN      NS      franky-work.com.
+    @       IN      A       10.7.3.13
+    www     IN      CNAME   franky-work.com.
+```
+
+Setelah selesai konfigurasi tersebut berhasil, lakukan copy file dari semua file tersebut dengan `cp /root/named-8.conf.local /etc/bind/named.conf.local`, `cp /root/loid-work-8.com /etc/bind/wise/loid-work.com`, `cp /root/franky-work-8.com /etc/bind/wise/franky-work.com`. Kemudian restart bind9 dengan `service bind9 restart`. <br> 
+
+Buat isi file `apache2.conf` , `loid-work.com.conf` , `franky-work.com.conf` dengan copy semua file dengan `cp /root/apache2-8.conf /etc/apache2/apache2.conf` , `cp /root/loid-default-8.conf /etc/apache2/sites-available/loid-work.com.conf` , `cp /root/franky-default-8.conf /etc/apache2/sites-available/franky-work.com.conf` .
+
+```
+   apt-get install apache2 -y
+   apt-get install php -y
+   apt-get install libapache2-mod-php7.0 -y
+
+   # /etc/apache2/apache2.conf
+   ...
+   ServerName 10.8.3.13
+   
+   # /etc/apache2/sites-available/loid-work.com.conf
+   <VirtualHost *:80>
+        ServerName loid-work.com
+        ServerAlias www.loid-work.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/loid-work.com
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+   </VirtualHost>
+
+   # /etc/apache2/sites-available/franky-work.com.conf
+   <VirtualHost *:80>
+        ServerName franky-work.com
+        ServerAlias www.franky-work.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/franky-work.com
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+   </VirtualHost>
+```
+
+Setelah konfigurasi tersebut, aktifkan domain dengan a2ensite dengan perintah `a2ensite loid-work.com` dan `a2ensite franky-work.com`. Kemudian buat directory baru dengan `mkdir /var/www/loid-work.com` dan `mkdir /var/www/franky-work.com` . Setelah itu masukan konfigurasi syntax dibawah ini:
+
+```
+   # /var/www/loid-work.com/index.php
+   <?php
+        echo "Ini domain loid-work";
+   ?>
+   
+   # /var/www/franky-work.com/index.php
+   <?php
+        echo "Ini domain franky-work";
+   ?>
+```
+
+Pada Berlint, tambahkan konfigurasi pada file `acl-1.conf`
+
+```
+  acl CAN_ACCESS_1 time MTWHF 00:00-07:59
+  acl CAN_ACCESS_2 time MTWHF 17:01-23:59
+  acl CAN_ACCESS_3 time AS 00:00-23:59
+
+  acl WORK_HOUR time MTWHF 08:00-17:00
+  acl CERTAIN_DOMAIN dstdomain .loid-work.com .franky-work.com
+```
+
+pada file `squid8-9.conf` tambahkan:
+
+```
+  include /etc/squid/acl.conf
+
+  http_port 8080
+  visible_hostname Berlint
+
+  http_access deny CERTAIN_DOMAIN CAN_ACCESS_1
+  http_access deny CERTAIN_DOMAIN CAN_ACCESS_2
+  http_access deny CERTAIN_DOMAIN CAN_ACCESS_3
+  
+  http_access allow CAN_ACCESS_1
+  http_access allow CAN_ACCESS_2
+  http_access allow CAN_ACCESS_3
+  
+  http_access allow CERTAIN_DOMAIN WORK_HOUR
+```
+
  **TESTING**
  <img alt="testing9" src="pic/testing9.png">
 
