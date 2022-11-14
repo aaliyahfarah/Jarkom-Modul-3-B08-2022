@@ -473,11 +473,6 @@ Maka, ketika di test pada client dengan `lynx http://its.ac.id` dan `lynx https:
 ***2. Adapun pada hari dan jam kerja sesuai nomor (1), client hanya dapat mengakses 
 domain loid-work.com dan franky-work.com (IP tujuan domain dibebaskan)***<br><br>
 
-## Soal 9
-
-***2. Adapun pada hari dan jam kerja sesuai nomor (1), client hanya dapat mengakses 
-domain loid-work.com dan franky-work.com (IP tujuan domain dibebaskan)***<br><br>
-
 Pada Node Wise, buat isi file `named.conf.local` kemudian buat directory baru dengan perintah `mkdir /etc/bind/wise` dan buat file baru lagi pada directory wise dengan nama `loid-work.com` dan `franky-work.com` kemudian isikan syntax berikut :
 
 ```
@@ -609,6 +604,8 @@ pada file `squid8-9.conf` tambahkan:
   
   http_access allow CERTAIN_DOMAIN WORK_HOUR
 ```
+
+Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain hanya diakses di jam kerja. Setelah itu restart apache2 dengan `service apache2 restart`.
 
  **TESTING**
  <img alt="testing9" src="pic/testing9.png">
