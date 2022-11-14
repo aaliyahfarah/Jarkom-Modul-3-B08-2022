@@ -422,7 +422,7 @@ Berlint sebagai HTTP & HTTPS proxy. Adapun kriteria pengaturannya adalah sebagai
 **Penambahan ACL Waktu dan Konfigurasi Akses Berdasarkan ACL Waktu**
 **
 Buat file `no8-9.sh` dan isikan potongan teks berikut:
-- squid8-9.conf
+- no8-9.sh
   
   ```shell
     echo -e '
@@ -526,9 +526,9 @@ Pada Node Wise, buat isi file `named.conf.local` kemudian buat directory baru de
     www     IN      CNAME   franky-work.com.
 ```
 
-Setelah selesai konfigurasi tersebut berhasil, lakukan copy file dari semua file tersebut dengan `cp /root/named-8.conf.local /etc/bind/named.conf.local`, `cp /root/loid-work-8.com /etc/bind/wise/loid-work.com`, `cp /root/franky-work-8.com /etc/bind/wise/franky-work.com`. Kemudian restart bind9 dengan `service bind9 restart`. <br> 
+Setelah selesai konfigurasi tersebut berhasil, lakukan copy file dari semua file tersebut dengan `cp named.conf.local /etc/bind/ndamed.conf.local`, `cp loid-work.com /etc/bind/soal9/loid-work.com`, `cp franky-work.com /etc/bind/soal9/franky-work.com`. Kemudian restart bind9 dengan `service bind9 restart`. <br> 
 
-Buat isi file `apache2.conf` , `loid-work.com.conf` , `franky-work.com.conf` dengan copy semua file dengan `cp /root/apache2-8.conf /etc/apache2/apache2.conf` , `cp /root/loid-default-8.conf /etc/apache2/sites-available/loid-work.com.conf` , `cp /root/franky-default-8.conf /etc/apache2/sites-available/franky-work.com.conf` .
+Buat isi file `apache2.conf` , `loid-work.com.conf` , `franky-work.com.conf` dengan copy semua file dengan `cp apache2.conf /etc/apache2/apache2.conf` , `cp loid-default.conf /etc/apache2/sites-available/loid-work.com.conf` , `cp franky-default.conf /etc/apache2/sites-available/franky-work.com.conf` .
 
 ```
    apt-get install apache2 -y
@@ -537,7 +537,7 @@ Buat isi file `apache2.conf` , `loid-work.com.conf` , `franky-work.com.conf` den
 
    # /etc/apache2/apache2.conf
    ...
-   ServerName 10.8.3.13
+   ServerName 10.7.3.13
    
    # /etc/apache2/sites-available/loid-work.com.conf
    <VirtualHost *:80>
@@ -578,37 +578,51 @@ Setelah konfigurasi tersebut, aktifkan domain dengan a2ensite dengan perintah `a
    ?>
 ```
 
-Pada Berlint, tambahkan konfigurasi pada file `acl-1.conf`
+Pada Berlint, tambahkan konfigurasi pada file `no8-9.sh`
 
-```
-  acl CAN_ACCESS_1 time MTWHF 00:00-07:59
-  acl CAN_ACCESS_2 time MTWHF 17:01-23:59
-  acl CAN_ACCESS_3 time AS 00:00-23:59
-
-  acl WORK_HOUR time MTWHF 08:00-17:00
-  acl CERTAIN_DOMAIN dstdomain .loid-work.com .franky-work.com
-```
-
-pada file `squid8-9.conf` tambahkan:
-
-```
-  include /etc/squid/acl.conf
-
-  http_port 8080
-  visible_hostname Berlint
-
-  http_access deny CERTAIN_DOMAIN CAN_ACCESS_1
-  http_access deny CERTAIN_DOMAIN CAN_ACCESS_2
-  http_access deny CERTAIN_DOMAIN CAN_ACCESS_3
+- no8-9.sh
   
-  http_access allow CAN_ACCESS_1
-  http_access allow CAN_ACCESS_2
-  http_access allow CAN_ACCESS_3
-  
-  http_access allow CERTAIN_DOMAIN WORK_HOUR
-```
+  ```shell
+    echo -e '
+	.loid-work.com
+	.franky-work.com
+	' > /etc/squid/domain.acl
 
-Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain hanya diakses di jam kerja. Setelah itu restart apache2 dengan `service apache2 restart`.
+
+	echo -e '
+	acl AVAILABLE_1 time MTWHF 00:00-07:59
+	acl AVAILABLE_2 time MTWHF 17:01-23:59
+	acl AVAILABLE_3 time AS 00:00-23:59
+
+	acl WORK_TIME time MTWHF 08:00-17:00
+
+	acl RESTRICTED_DOMAIN dstdomain "/etc/squid/domain.acl"
+	' > /etc/squid/acl.conf
+
+	echo -e '
+	include /etc/squid/acl.conf
+
+	http_port 8080
+	visible_hostname Berlint
+
+	http_access deny RESTRICTED_DOMAIN AVAILABLE_1
+	http_access deny RESTRICTED_DOMAIN AVAILABLE_2
+	http_access deny RESTRICTED_DOMAIN AVAILABLE_3
+
+	http_access allow AVAILABLE_1 all
+	http_access allow AVAILABLE_2 all
+	http_access allow AVAILABLE_3 all
+
+	http_access allow RESTRICTED_DOMAIN WORK_TIME
+	
+	http_access deny all
+
+	' > /etc/squid/squid.conf
+
+	service squid restart
+  ```
+
+Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain hanya diakses di jam kerja. 
 
  **TESTING**
  <img alt="testing9" src="pic/testing9.png">
@@ -618,10 +632,11 @@ Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain h
 ***3. Saat akses internet dibuka, client dilarang untuk mengakses web tanpa HTTPS. 
 (Contoh web HTTP: http://example.com)***<br><br>
 
-Pada node Berlint, buat file `squid10.conf` dengan konfigurasi berikut:
+Pada node Berlint, buat file `no10.sh` dengan konfigurasi berikut:
 
 ```
-include /etc/squid/acl.conf
+echo -e '
+  include /etc/squid/acl.conf
 
   http_port 8080
   visible_hostname Berlint
@@ -637,9 +652,8 @@ include /etc/squid/acl.conf
   http_access deny all
   
   http_access allow CERTAIN_DOMAIN WORK_HOUR
-```
 
-Lalu, copy file dengan `cp /root/squid10.conf /etc/squid/squid.conf` dan restart squid dengan `service squid restart`.
+```
 
  **TESTING**
  <img alt="testing10" src="pic/testing10.png">
@@ -655,6 +669,7 @@ Lalu, copy file dengan `cp /root/squid10.conf /etc/squid/squid.conf` dan restart
 
 	1. Penggunaan GNS yang masih baru
 	2. GNS yang sering error saat digunakan
+	3. Sering terjadi kegagalan yang membuat harus menrun ulang
 
 + Sejati Bakti Raga
 
