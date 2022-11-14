@@ -416,16 +416,19 @@ hari libur***<br><br>
  <img alt="testing12" src="pic/testing12.png">
 
 ## Kendala
-+ Aaliyah Farah Adibah<br>
-    	1. Hanya bisa mengerjakan hingga no. 7 
-    	2. GNS yang mudah error
-    	3. Sempat fail di restart DHCP Server hingga perlu run semua node dari awal
++ Aaliyah Farah Adibah
+
+	1. Hanya bisa mengerjakan hingga no. 7 
+	2. GNS yang mudah error
+	3. Sempat fail di restart DHCP Server hingga perlu run semua node dari awal
 	
 + Rafael Asi Kristanto Tambunan
+
 	1. Penggunaan GNS yang masih baru
 	2. GNS yang sering error saat digunakan
 
 + Sejati Bakti Raga
+
 	1. Pemahaman GNS yang masih kurang
 	2. GNS dan VM error ditengah pengerjaan
 
