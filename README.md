@@ -615,6 +615,29 @@ Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain h
 ***3. Saat akses internet dibuka, client dilarang untuk mengakses web tanpa HTTPS. 
 (Contoh web HTTP: http://example.com)***<br><br>
 
+Pada node Berlint, buat file `squid10.conf` dengan konfigurasi berikut:
+
+```
+include /etc/squid/acl.conf
+
+  http_port 8080
+  visible_hostname Berlint
+
+  http_access deny CERTAIN_DOMAIN CAN_ACCESS_1
+  http_access deny CERTAIN_DOMAIN CAN_ACCESS_2
+  http_access deny CERTAIN_DOMAIN CAN_ACCESS_3
+  http_access deny all
+  
+  http_access allow CAN_ACCESS_1
+  http_access allow CAN_ACCESS_2
+  http_access allow CAN_ACCESS_3
+  http_access deny all
+  
+  http_access allow CERTAIN_DOMAIN WORK_HOUR
+```
+
+Lalu, copy file dengan `cp /root/squid10.conf /etc/squid/squid.conf` dan restart squid dengan `service squid restart`.
+
  **TESTING**
  <img alt="testing10" src="pic/testing10.png">
 
@@ -632,7 +655,7 @@ Syntax `http_access allow CERTAIN_DOMAIN WORK_HOUR` akan memperbolehkan domain h
 
 + Sejati Bakti Raga
 
-	1. Pemahaman GNS yang masih kurang
-	2. GNS dan VM error ditengah pengerjaan
+	1. ...
+	2. ...
 
 
