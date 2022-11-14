@@ -151,7 +151,7 @@ apt-get update
 apt-get install squid -y
 ```
 
-Selain, itu untuk menjadikan Westalis sebagai DHCP Server, kita perlu menambahkan konfigurasi pada node Westalis pada file `/etc/default/isc-dhcp-server` yang kita buat konfigurasinya pada file temporary yaitu `isc-dhcp-server-1` dengan ditambahkan `INTERFACES="eth0"`
+Selain, itu untuk menjadikan Westalis sebagai DHCP Server, kita perlu menambahkan konfigurasi pada node Westalis pada file `/etc/default/isc-dhcp-server` yang kita buat konfigurasinya pada file temporary yaitu `no1.sh` dengan ditambahkan `INTERFACES=\"eth0\"" > /etc/default/isc-dhcp-server`
 
 ```shell
 # Defaults for isc-dhcp-server initscript
@@ -169,10 +169,10 @@ Selain, itu untuk menjadikan Westalis sebagai DHCP Server, kita perlu menambahka
 #OPTIONS=""
 # On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
 #       Separate multiple interfaces with spaces, e.g. "eth0 eth1".
-INTERFACES="eth0"
+INTERFACES=\"eth0\"" > /etc/default/isc-dhcp-server
 ```
 
-Setelah itu, kita jalankan script `soal1.sh` pada node Westalis yang berisi:
+Setelah itu, kita jalankan script `no1.sh` pada node Westalis yang berisi:
 
 ```shell
 cp /root/isc-dhcp-server-1 /etc/default/isc-dhcp-server
@@ -190,12 +190,36 @@ dengan hati-hati dan teliti***<br><br>
 Ostania -> DHCP Relay 
 
 ```
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.8.0.0/16
+cat /etc/resolv.conf
 apt-get update
-apt-get install isc-dhcp-relay -y
+echo "" | apt-get install isc-dhcp-relay -y
 ```
 
- **TESTING**
- <img alt="testing2" src="pic/testing2.png">
+Setelah itu, lakukan konfigurasi pada node Ostania pada file `/etc/default/isc-dhcp-relay` yang kita buat konfigurasinya pada file temporary yaitu `no2.sh` yang berisi:
+
+```shell
+echo -e '
+# Defaults for isc-dhcp-relay initscript
+# sourced by /etc/init.d/isc-dhcp-relay
+# installed at /etc/default/isc-dhcp-relay by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# What servers should the DHCP relay forward requests to?
+SERVERS="10.7.2.4"
+
+# On what interfaces should the DHCP relay (dhrelay) serve DHCP requests?
+INTERFACES="eth1 eth2 eth3"
+
+# Additional options that are passed to the DHCP relay daemon?
+OPTIONS=""
+' > /etc/default/isc-dhcp-relay
+
+service isc-dhcp-relay start
+```
 
 ## Soal 3
 
@@ -392,8 +416,57 @@ Berlint sebagai HTTP & HTTPS proxy. Adapun kriteria pengaturannya adalah sebagai
 ***1. Client hanya dapat mengakses internet diluar (selain) hari & jam kerja 
 (senin-jumat 08.00 - 17.00) dan hari libur (dapat mengakses 24 jam penuh)***<br><br>
 
- **TESTING**
- <img alt="testing8" src="pic/testing8.png">
+**Penambahan ACL Waktu dan Konfigurasi Akses Berdasarkan ACL Waktu**
+**
+Buat file `no8-9.sh` dan isikan potongan teks berikut:
+- squid8-9.conf
+  
+  ```shell
+    echo -e '
+	.loid-work.com
+	.franky-work.com
+	' > /etc/squid/domain.acl
+
+
+	echo -e '
+	acl AVAILABLE_1 time MTWHF 00:00-07:59
+	acl AVAILABLE_2 time MTWHF 17:01-23:59
+	acl AVAILABLE_3 time AS 00:00-23:59
+
+	acl WORK_TIME time MTWHF 08:00-17:00
+
+	acl RESTRICTED_DOMAIN dstdomain "/etc/squid/domain.acl"
+	' > /etc/squid/acl.conf
+
+	echo -e '
+	include /etc/squid/acl.conf
+
+	http_port 8080
+	visible_hostname Berlint
+
+	http_access deny RESTRICTED_DOMAIN AVAILABLE_1
+	http_access deny RESTRICTED_DOMAIN AVAILABLE_2
+	http_access deny RESTRICTED_DOMAIN AVAILABLE_3
+
+	http_access allow AVAILABLE_1 all
+	http_access allow AVAILABLE_2 all
+	http_access allow AVAILABLE_3 all
+
+	http_access allow RESTRICTED_DOMAIN WORK_TIME
+	
+	http_access deny all
+
+	' > /etc/squid/squid.conf
+
+	service squid restart
+  ```
+  
+
+Maka, ketika di test pada client dengan `lynx http://its.ac.id` dan `lynx https://its.ac.id` akan menghasilkan seperti ini:
+- Senin (10.00) -> tidak dapat diakses
+![201596650-3accc237-a0a4-4dbc-bb78-0702e9518810](https://user-images.githubusercontent.com/88140623/201692744-64e7720e-79e2-47eb-8eb4-c9ce2bd0351d.png)
+- Senin (20.00) dan Sabtu (10.00) -> dapat diakses
+![201596969-0da0f06c-da91-4995-9eb7-86b2d9f2f5f5](https://user-images.githubusercontent.com/88140623/201692769-67c316d8-1a9f-44b7-bf97-be8d1f9d8239.png)
 
 ## Soal 9
 
